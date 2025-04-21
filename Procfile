@@ -1,0 +1,1 @@
+web: gunicorn cryptonest_backend.wsgi
