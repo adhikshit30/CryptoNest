@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | CryptoNest{% endblock %}
+
+{% block content %}
+<h2>Trading Dashboard</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Coin Pair</th>
+      <th>Price (USDT)</th>
+      <th>Buy</th>
+      <th>Sell</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for coin in coins %}
+    <tr>
+      <td>{{ coin.symbol }}</td>
+      <td>{{ coin.current_price }}</td>
+      <td>
+        <form method="POST" action="{% url 'place_order' %}">
+          {% csrf_token %}
+          <input type="hidden" name="order_type" value="buy">
+          <input type="hidden" name="coin_id" value="{{ coin.id }}">
+          <input type="number" name="quantity" step="0.01" placeholder="Qty" required>
+          <button type="submit" class="btn btn-sm btn-success">Buy</button>
+        </form>
+      </td>
+      <td>
+        <form method="POST" action="{% url 'place_order' %}">
+          {% csrf_token %}
+          <input type="hidden" name="order_type" value="sell">
+          <input type="hidden" name="coin_id" value="{{ coin.id }}">
+          <input type="number" name="quantity" step="0.01" placeholder="Qty" required>
+          <button type="submit" class="btn btn-sm btn-danger">Sell</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

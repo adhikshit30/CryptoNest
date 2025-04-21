@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}My Trade History{% endblock %}
+
+{% block content %}
+<h2>My Trade History</h2>
+{% if trades %}
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Coin</th>
+      <th>Qty</th>
+      <th>Price</th>
+      <th>Timestamp</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for trade in trades %}
+    <tr>
+      <td>{{ trade.order_type|title }}</td>
+      <td>{{ trade.coin.symbol }}</td>
+      <td>{{ trade.quantity }}</td>
+      <td>{{ trade.price_at_order }}</td>
+      <td>{{ trade.timestamp }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No trades placed yet.</p>
+{% endif %}
+{% endblock %}

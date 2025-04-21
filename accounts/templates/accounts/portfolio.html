@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}My Portfolio{% endblock %}
+
+{% block content %}
+<h2>My Portfolio</h2>
+{% if holdings %}
+<h4>Total Portfolio Value: <span class="text-success">${{ total_value }}</span> USDT</h4>
+<div class="mt-3">
+    <h5 class="text-primary">🔍 Portfolio Summary</h5>
+    <ul>
+      <li><strong>Total Trades:</strong> {{ total_trades }}</li>
+      <li><strong>Top Holding:</strong> {{ top_coin_name }}</li>
+      <li><strong>Average Buy Prices:</strong>
+        <ul>
+          {% for coin, avg in avg_price_dict.items %}
+          <li>{{ coin }}: ${{ avg }}</li>
+          {% endfor %}
+        </ul>
+      </li>
+    </ul>
+  </div>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Coin Pair</th>
+      <th>Quantity Held</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in holdings %}
+    <tr>
+      <td>{{ item.coin.symbol }}</td>
+      <td>{{ item.quantity }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<h3 class="mt-5">Portfolio Distribution</h3>
+<canvas id="portfolioChart" width="400" height="200"></canvas>
+
+<script>
+  const labels = {{ labels|safe }};
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'Holdings',
+      data: {{ quantities|safe }},
+      backgroundColor: [
+        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+      ],
+      hoverOffset: 8
+    }]
+  };
+
+  const config = {
+    type: 'pie',
+    data: data,
+  };
+
+  new Chart(
+    document.getElementById('portfolioChart'),
+    config
+  );
+</script>
+
+<h3 class="mt-5">Price Trend (7 Days)</h3>
+<canvas id="trendChart" width="600" height="300"></canvas>
+
+<script>
+  const trendLabels = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
+
+  const trendData = {
+    labels: trendLabels,
+    datasets: [
+      {
+        label: 'BTC/USDT',
+        borderColor: '#FF6384',
+        data: {{ price_trends.BTC|safe }},
+        fill: false
+      },
+      {
+        label: 'ETH/USDT',
+        borderColor: '#36A2EB',
+        data: {{ price_trends.ETH|safe }},
+        fill: false
+      },
+      {
+        label: 'XRP/USDT',
+        borderColor: '#FFCE56',
+        data: {{ price_trends.XRP|safe }},
+        fill: false
+      }
+    ]
+  };
+
+  new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: trendData
+  });
+</script>
+{% else %}
+<p>You don't hold any coins yet.</p>
+{% endif %}
+{% endblock %}
